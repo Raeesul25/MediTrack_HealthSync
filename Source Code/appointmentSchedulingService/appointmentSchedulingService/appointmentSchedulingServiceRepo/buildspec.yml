@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo Building and pushing Docker images...
+      - docker-compose up -d
+      - docker ps
+
+  post_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 529088288184.dkr.ecr.us-east-1.amazonaws.com
+      - echo Pushing appointment-image Docker image to ECR...
+      - docker tag appointment-app-image:latest 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-appointment-scheduling:latest
+      - docker push 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-appointment-scheduling:latest
+
+artifacts:
+  files: 
+    - '**/*'
+
+post_build:
+  commands:
+    - echo Deploying to Kubernetes...
+    - kubectl apply -f deployment.yaml

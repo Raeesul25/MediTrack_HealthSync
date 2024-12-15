@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  dashboard-app:
+    build: ./notification_service
+    image: notification-image
+    container_name: notification-image
+    network_mode: host

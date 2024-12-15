@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  dashboard-app:
+    build: ./appointment_scheduling
+    image: appointment-image
+    container_name: appointment-image
+    network_mode: host

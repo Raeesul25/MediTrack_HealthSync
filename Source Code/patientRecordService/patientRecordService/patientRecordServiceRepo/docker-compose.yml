@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  dashboard-app:
+    build: ./patient_record
+    image: patient-image
+    container_name: patient-image
+    network_mode: host
