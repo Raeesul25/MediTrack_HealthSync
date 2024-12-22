@@ -1,0 +1,62 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Python and dependencies for testing
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies for patient service
+        working-directory: ./patientRecordService
+        run: |
+          pip install -r requirements.txt
+
+      # Log in to DigitalOcean container registry
+      - name: Log in to AWS ECR
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 529088288184.dkr.ecr.us-east-1.amazonaws.com
+
+      # Build and push each service
+      - name: Build and push Patient Record Service
+        run: |
+          docker build -t 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-patient-record ./patientRecordService
+          docker push 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-patient-record
+
+  deploy:
+    needs: build-and-push  # Ensures that deployment happens only after the build job succeeds
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Set up kubeconfig
+      run: doctl kubernetes cluster kubeconfig save k8s-1-31-1-do-5-sgp1-1734795051852
+
+    - name: Apply Kubernetes Manifests
+      run: |
+        kubectl apply -f patient-blue-deployment.yaml
+        kubectl apply -f ingress-blue.yaml
