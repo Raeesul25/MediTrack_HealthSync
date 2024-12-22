@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: patient-record-service
-        image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-patient-record:green
+        image: registry.digitalocean.com/meditrack-patient-record:green
         ports:
         - containerPort: 80
       imagePullSecrets:

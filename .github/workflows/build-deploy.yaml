@@ -24,24 +24,16 @@ jobs:
         working-directory: ./patientRecordService
         run: |
           pip install -r requirements.txt
-
-      # onfigure AWS Credentials
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::529088288184:role/github-actions
-          role-session-name: GitHubActionsSession
-          aws-region: us-east-1
           
-      # Log in to AWS ECR Container Registry
-      - name: Log in to AWS ECR
-        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 529088288184.dkr.ecr.us-east-1.amazonaws.com
+      # Log in to DigitalOcean container registry
+      - name: Log in to DigitalOcean
+        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
 
       # Build and push each service
       - name: Build and push Patient Record Service
         run: |
-          docker build -t 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-patient-record ./patientRecordService
-          docker push 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-patient-record
+          docker build -t registry.digitalocean.com/meditrack-patient-record ./patientRecordService
+          docker push registry.digitalocean.com/meditrack-patient-record
 
   deploy:
     needs: build-and-push  # Ensures that deployment happens only after the build job succeeds
