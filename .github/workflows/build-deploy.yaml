@@ -59,4 +59,4 @@ jobs:
     - name: Apply Kubernetes Manifests
       run: |
         kubectl apply -f ./patientRecordService/patient-blue-deployment.yaml
-        kubectl apply -f ./patientRecordService/ingress-blue.yaml
+        kubectl apply -f ingress-blue.yaml
