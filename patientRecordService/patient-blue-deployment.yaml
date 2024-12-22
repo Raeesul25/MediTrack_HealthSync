@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-record-service-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-record-service
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: patient-record-service
+        version: blue
+
+    spec:
+      containers:
+      - name: patient-record-service
+        image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-patient-record:blue
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: do-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: patient-record-service-blue
+spec:
+  selector:
+    app: patient-record-service
+    version: blue
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP

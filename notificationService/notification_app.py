@@ -19,7 +19,7 @@ def index():
     return render_template('index.html')
 
 # API to send a notification
-@app.route('/api/notifications', methods=['POST'])
+@app.route('/add_notification', methods=['POST'])
 def send_notification():
     data = request.json
     patient_id = data.get('patient_id')
@@ -57,7 +57,7 @@ def send_notification():
         connection.close()
 
 # API to retrieve all notifications
-@app.route('/api/notifications', methods=['GET'])
+@app.route('/get_notifications', methods=['GET'])
 def get_notifications():
     try:
         connection = get_db_connection()

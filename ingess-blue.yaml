@@ -1,0 +1,106 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: 
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: 156.225.192.172.nip.io
+    http:
+      paths:
+      - path: /get_patients
+        pathType: Prefix
+        backend:
+          service:
+            name: patient-record-service-blue
+            port:
+              number: 80
+      - path: /add_patient
+        pathType: Exact
+        backend:
+          service:
+            name: patient-record-service-blue
+            port:
+              number: 80
+      - path: /update_patient
+        pathType: Prefix
+        backend:
+          service:
+            name: patient-record-service-blue
+            port:
+              number: 80
+      - path: /delete_patient
+        pathType: Prefix
+        backend:
+          service:
+            name: patient-record-service-blue
+            port:
+              number: 80
+
+      - path: /get_doctors
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+      - path: /add_doctor
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+      - path: /update_doctor
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+      - path: /delete_doctor
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+
+      - path: /get_appointments
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+      - path: /add_appointment
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+      - path: /delete_appointment
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-blue
+            port:
+              number: 80
+
+      - path: /add_notification
+        pathType: Prefix
+        backend:
+          service:
+            name: notification-service-blue
+            port:
+              number: 80
+      - path: /get_notifications
+        pathType: Prefix
+        backend:
+          service:
+            name: notification-service-blue
+            port:
+              number: 80

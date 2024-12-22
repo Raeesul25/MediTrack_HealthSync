@@ -18,7 +18,7 @@ def index():
     return render_template('index.html')
 
 # API to get all available doctors
-@app.route('/api/doctors', methods=['GET'])
+@app.route('/get_doctors', methods=['GET'])
 def get_doctors():
     try:
         connection = get_db_connection()
@@ -39,7 +39,7 @@ def get_doctors():
         connection.close()
 
 # API to add a new doctor
-@app.route('/api/doctors', methods=['POST'])
+@app.route('/add_doctor', methods=['POST'])
 def add_doctor():
     data = request.json
     name = data.get('name')
@@ -70,7 +70,7 @@ def add_doctor():
         connection.close()
 
 # API to update doctor information
-@app.route('/api/doctors/<int:doctor_id>', methods=['PUT'])
+@app.route('/update_doctor/<int:doctor_id>', methods=['PUT'])
 def update_doctor(doctor_id):
     data = request.json
 
@@ -106,8 +106,32 @@ def update_doctor(doctor_id):
         cursor.close()
         connection.close()
 
+# API to delete a doctor
+@app.route('/delete_doctor/<int:doctor_id>', methods=['DELETE'])
+def delete_doctor(doctor_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        query = "DELETE FROM doctors WHERE doctor_id = %s"
+        cursor.execute(query, (doctor_id,))
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"message": "Doctor not found."}), 404
+
+        return jsonify({"message": "Doctor deleted successfully."}), 200
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return jsonify({"message": "Failed to delete doctor."}), 500
+
+    finally:
+        cursor.close()
+        connection.close()
+
 # API to book an appointment
-@app.route('/api/appointments', methods=['POST'])
+@app.route('/add_appointment', methods=['POST'])
 def book_appointment():
     data = request.json
     patient_id = data.get('patient_id')
@@ -157,7 +181,7 @@ def book_appointment():
         connection.close()
 
 # API to view all appointments
-@app.route('/api/appointments', methods=['GET'])
+@app.route('/get_appointments', methods=['GET'])
 def get_appointments():
     try:
         connection = get_db_connection()
@@ -178,6 +202,30 @@ def get_appointments():
     except mysql.connector.Error as err:
         print(f"Error: {err}")
         return jsonify({"message": "Failed to retrieve appointments."}), 500
+
+    finally:
+        cursor.close()
+        connection.close()
+
+# API to delete an appointment
+@app.route('/delete_appointment/<int:appointment_id>', methods=['DELETE'])
+def delete_appointment(appointment_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        query = "DELETE FROM appointments WHERE appointment_id = %s"
+        cursor.execute(query, (appointment_id,))
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"message": "Appointment not found."}), 404
+
+        return jsonify({"message": "Appointment deleted successfully."}), 200
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return jsonify({"message": "Failed to delete appointment."}), 500
 
     finally:
         cursor.close()

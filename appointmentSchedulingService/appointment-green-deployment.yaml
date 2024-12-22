@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-scheduling-service-green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment-scheduling-service
+      version: green
+  template:
+    metadata:
+      labels:
+        app: appointment-scheduling-service
+        version: green
+
+    spec:
+      containers:
+      - name: appointment-scheduling-service
+        image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-appointment-scheduling:green
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: do-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-scheduling-service-green
+spec:
+  selector:
+    app: appointment-scheduling-service
+    version: green
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP

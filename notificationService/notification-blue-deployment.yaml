@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: notification-service
+        version: blue
+
+    spec:
+      containers:
+      - name: notification-service
+        image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-notification:blue
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: do-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service-blue
+spec:
+  selector:
+    app: notification-service
+    version: blue
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP
