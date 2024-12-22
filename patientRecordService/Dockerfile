@@ -11,7 +11,7 @@ COPY . .
 RUN pip install -r requirements.txt
 
 # Copy test files
-COPY tmplates ./templates
+COPY templates ./templates
 
 # Expose the application port
 EXPOSE 5000
