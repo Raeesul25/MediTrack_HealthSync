@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: aggregator-cronjob
+spec:
+  schedule: "30 18 * * *" # Run at 1 AM daily
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: aggregator
+            image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-aggregate-service:latest
+            imagePullPolicy: Always
+            
+          imagePullSecrets:
+          - name: do-secret
+          restartPolicy: Never
+
