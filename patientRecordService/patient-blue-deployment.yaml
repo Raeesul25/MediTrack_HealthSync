@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: patient-record-service
-        image: registry.digitalocean.com/meditrack-patient-record:blue
+        image: registry.digitalocean.com/meditrackcontainer/patient-record:blue
         ports:
         - containerPort: 80
       imagePullSecrets:

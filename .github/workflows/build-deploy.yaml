@@ -32,8 +32,8 @@ jobs:
       # Build and push each service
       - name: Build and push Patient Record Service
         run: |
-          docker build -t registry.digitalocean.com/meditrack-patient-record ./patientRecordService
-          docker push registry.digitalocean.com/meditrack-patient-record
+          docker build -t registry.digitalocean.com/meditrackcontainer/patient-record ./patientRecordService
+          docker push registry.digitalocean.com/meditrackcontainer/patient-record
 
   deploy:
     needs: build-and-push  # Ensures that deployment happens only after the build job succeeds
