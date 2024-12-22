@@ -25,6 +25,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      # onfigure AWS Credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::529088288184:role/github-actions
+          role-session-name: GitHubActionsSession
+          aws-region: us-east-1
+          
       # Log in to AWS ECR Container Registry
       - name: Log in to AWS ECR
         run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 529088288184.dkr.ecr.us-east-1.amazonaws.com
