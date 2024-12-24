@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: appointment-scheduling-service
-        image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-appointment-scheduling:blue
+        image: registry.digitalocean.com/meditrackcontainer/appointment-scheduling:blue
         ports:
         - containerPort: 80
       imagePullSecrets:

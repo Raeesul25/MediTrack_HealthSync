@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: aggregator
-            image: 529088288184.dkr.ecr.us-east-1.amazonaws.com/meditrack-aggregate-service:latest
+            image: registry.digitalocean.com/meditrackcontainer/aggregate-service:latest
             imagePullPolicy: Always
             
           imagePullSecrets:

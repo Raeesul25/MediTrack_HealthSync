@@ -6,7 +6,46 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  change-to-blue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Log in to DigitalOcean container registry
+      - name: Log in to DigitalOcean
+        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
+
+      - name: Build and push aggregator
+        run: |
+          docker build -t registry.digitalocean.com/meditrackcontainer/aggregate-service:latest ./aggregatorService
+          docker push registry.digitalocean.com/meditrackcontainer/aggregate-service:latest  
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Set up kubeconfig
+        run: doctl kubernetes cluster kubeconfig save k8s-1-31-1-do-5-sgp1-1734795051852
+
+      - name: Apply Kubernetes Manifests blue
+        run: |
+          kubectl apply -f ingress-blue.yaml
+          kubectl apply -f ./aggregatorService/aggregator-cronjob.yaml
+
+
+  build-green:
+    needs: change-to-blue
     runs-on: ubuntu-latest
 
     steps:
@@ -14,49 +53,148 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Install Python and dependencies for testing
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies for patient service
-        working-directory: ./patientRecordService
-        run: |
-          pip install -r requirements.txt
-          
       # Log in to DigitalOcean container registry
       - name: Log in to DigitalOcean
         run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
 
       # Build and push each service
-      - name: Build and push Patient Record Service
+      - name: Build and push Patient Record Service green
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/patient-record ./patientRecordService
-          docker push registry.digitalocean.com/meditrackcontainer/patient-record
+          docker build -t registry.digitalocean.com/meditrackcontainer/patient-record:green ./patientRecordService
+          docker push registry.digitalocean.com/meditrackcontainer/patient-record:green
 
-  deploy:
-    needs: build-and-push  # Ensures that deployment happens only after the build job succeeds
+      - name: Build and push Appointment Scheduling Service green
+        run: |
+          docker build -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green ./appointmentSchedulingService
+          docker push registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green
+
+      - name: Build and push Notification Service green
+        run: |
+          docker build -t registry.digitalocean.com/meditrackcontainer/notification-service:green ./notificationService
+          docker push registry.digitalocean.com/meditrackcontainer/notification-service:green
+ 
+
+  deploy-green:
+    needs: build-green  
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Set up doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'latest'
 
-    - name: Set up kubeconfig
-      run: doctl kubernetes cluster kubeconfig save k8s-1-31-1-do-5-sgp1-1734795051852
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
-    - name: Apply Kubernetes Manifests
-      run: |
-        kubectl apply -f ./patientRecordService/patient-blue-deployment.yaml
-        kubectl apply -f ingress-blue.yaml
+
+      - name: Set up kubeconfig
+        run: doctl kubernetes cluster kubeconfig save k8s-1-31-1-do-5-sgp1-1734795051852
+
+      - name: Apply Kubernetes Manifests green
+        run: |
+          kubectl apply -f ./appointmentSchedulingService/appointment-green-deployment.yaml
+          kubectl apply -f ./notificationService/notification-green-deployment.yaml
+          kubectl apply -f ./patientRecordService/patient-green-deployment.yaml
+          kubectl rollout restart deployment patient-record-service-green
+          kubectl rollout restart deployment appointment-scheduling-service-green
+
+      - name: Port-forward Green Service for Testing Patients
+        run: |
+          kubectl port-forward service/patient-record-service-green 8080:80 &
+          sleep 5  # Wait for port-forward to establish
+
+      - name: Run Tests for patients
+
+        working-directory: ./patientRecordService
+        run: |
+          python -m venv venv 
+          source venv/bin/activate
+          pip install pytest
+          pip install requests
+          pytest tests/test_patient.py --maxfail=1 --disable-warnings
+          pkill -f 'kubectl port-forward'
+
+      - name: Port-forward Green Service for Testing Doctors
+        run: |
+          kubectl port-forward service/appointment-scheduling-service-green 8080:80 &
+          sleep 5  # Wait for port-forward to establish
+
+      - name: Run Tests for doctors
+        working-directory: ./appointmentSchedulingService
+        run: |
+          python -m venv venv 
+          source venv/bin/activate
+          pip install pytest
+          pip install requests
+          pytest tests/test_doctor.py --maxfail=1 --disable-warnings
+          pkill -f 'kubectl port-forward'
+
+  build-blue:
+    needs: deploy-green
+    if: success()  # Only runs if tests pass
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Log in to DigitalOcean container registry
+      - name: Log in to DigitalOcean
+        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
+
+      # Build and push each service
+      - name: Build and push patient record Service blue
+        run: |
+          docker build -t registry.digitalocean.com/meditrackcontainer/patient-record:blue ./patientRecordService
+          docker push registry.digitalocean.com/meditrackcontainer/patient-record:blue
+
+      - name: Build and push appointment scheduling Service blue
+        run: |
+          docker build -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:blue ./appointmentSchedulingService
+          docker push registry.digitalocean.com/meditrackcontainer/appointment-scheduling:blue
+
+      - name: Build and push notification Service blue
+        run: |
+          docker build -t registry.digitalocean.com/meditrackcontainer/notification-service:blue ./notificationService
+          docker push registry.digitalocean.com/meditrackcontainer/notification-service:blue
+
+  
+  deploy:
+    needs: build-blue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Set up kubeconfig
+        run: doctl kubernetes cluster kubeconfig save k8s-1-31-1-do-5-sgp1-1734795051852
+
+      - name: Apply Kubernetes Manifests blue
+        run: |
+          kubectl apply -f ./appointmentSchedulingService/appointment-blue-deployment.yaml
+          kubectl rollout restart deployment appointment-scheduling-service-blue
+          kubectl apply -f ./notificationService/notification-blue-deployment.yaml
+          kubectl apply -f ./patientRecordService/patient-blue-deployment.yaml
+          kubectl apply -f ingress-green.yaml
+          kubectl rollout restart deployment patient-record-service-blue
+          kubectl rollout restart deployment appointment-scheduling-service-blue
+
