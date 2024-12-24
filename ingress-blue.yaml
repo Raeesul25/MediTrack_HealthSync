@@ -11,7 +11,7 @@ spec:
     http:
       paths:
       - path: /get_patients
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: patient-record-service-blue
@@ -40,14 +40,14 @@ spec:
               number: 80
 
       - path: /get_doctors
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: appointment-scheduling-service-blue
             port:
               number: 80
       - path: /add_doctor
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: appointment-scheduling-service-blue
@@ -69,7 +69,7 @@ spec:
               number: 80
 
       - path: /get_appointments
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: appointment-scheduling-service-blue
@@ -91,14 +91,14 @@ spec:
               number: 80
 
       - path: /add_notification
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: notification-service-blue
             port:
               number: 80
       - path: /get_notifications
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: notification-service-blue

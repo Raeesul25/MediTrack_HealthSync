@@ -1,0 +1,29 @@
+-- Download kubectl and doctl
+-- verify the kubectl and doctl version 
+kubectl --version
+doctl version
+
+-- Authenticate with DigitalOcean
+doctl auth init
+
+-- Retrieve the Kubernetes Cluster Configuration
+doctl kubernetes cluster kubeconfig save <cluster-name>
+
+-- Set Up the Kubeconfig Path 
+set KUBECONFIG=C:\KubernatesCluster\kube-config.yaml
+
+-- Test the Connection
+kubectl get nodes
+
+-- Install Nginx Ingress Controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+-- Verify Installation
+kubectl get all -n ingress-nginx
+
+-- Ensure the controller pod is running
+kubectl get pods -n ingress-nginx
+
+-- Get the Nginx Ingress Host IP
+kubectl get service -n ingress-nginx
+
