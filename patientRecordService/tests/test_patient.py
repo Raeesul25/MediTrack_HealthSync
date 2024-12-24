@@ -10,7 +10,7 @@ def test_patient_operations():
     "gender": "Female",
     "address": "Testing",
     "email": "testing@gmail.com",
-    "contact" : "1234567891",
+    "contact_number" : "1234567891",
     "medical_history": [
         "Allergies: Testing",
         "Chronic Conditions: Testing"]

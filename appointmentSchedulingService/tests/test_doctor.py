@@ -8,7 +8,7 @@ def test_patient_operations():
     "name": "Dr. Testing",
     "specialty": 29,
     "email": "testing@gmail.com",
-    "contact" : "1234567890",
+    "contact_number" : "1234567890",
     "availability_hours": "5 PM - 10 PM"
     }
 
