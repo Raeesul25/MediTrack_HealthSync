@@ -18,6 +18,7 @@ spec:
       containers:
       - name: appointment-scheduling-service
         image: registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
       imagePullSecrets:

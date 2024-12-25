@@ -19,7 +19,7 @@ jobs:
 
       - name: Build and push aggregator
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/aggregate-service:latest ./aggregatorService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/aggregate-service:latest ./aggregatorService
           docker push registry.digitalocean.com/meditrackcontainer/aggregate-service:latest  
 
       - name: Checkout code
@@ -60,17 +60,17 @@ jobs:
       # Build and push each service
       - name: Build and push Patient Record Service green
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/patient-record:green ./patientRecordService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/patient-record:green ./patientRecordService
           docker push registry.digitalocean.com/meditrackcontainer/patient-record:green
 
       - name: Build and push Appointment Scheduling Service green testing
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green ./appointmentSchedulingService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green ./appointmentSchedulingService
           docker push registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green
 
       - name: Build and push Notification Service green
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/notification-service:green ./notificationService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/notification-service:green ./notificationService
           docker push registry.digitalocean.com/meditrackcontainer/notification-service:green
  
 
@@ -153,17 +153,17 @@ jobs:
       # Build and push each service
       - name: Build and push patient record Service blue
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/patient-record:blue ./patientRecordService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/patient-record:blue ./patientRecordService
           docker push registry.digitalocean.com/meditrackcontainer/patient-record:blue
 
       - name: Build and push appointment scheduling Service blue
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:blue ./appointmentSchedulingService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:blue ./appointmentSchedulingService
           docker push registry.digitalocean.com/meditrackcontainer/appointment-scheduling:blue
 
       - name: Build and push notification Service blue
         run: |
-          docker build -t registry.digitalocean.com/meditrackcontainer/notification-service:blue ./notificationService
+          docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/notification-service:blue ./notificationService
           docker push registry.digitalocean.com/meditrackcontainer/notification-service:blue
 
   
