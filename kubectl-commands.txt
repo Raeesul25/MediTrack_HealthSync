@@ -27,3 +27,16 @@ kubectl get pods -n ingress-nginx
 -- Get the Nginx Ingress Host IP
 kubectl get service -n ingress-nginx
 
+-- create a do-secret in Kubernetes with the digital ocean token
+kubectl create secret docker-registry do-secret \
+  --docker-server=registry.digitalocean.com \
+  --docker-username=docean \
+  --docker-password=<digitalocean-token> \
+  --docker-email=<your-email> \
+  -n default
+
+-- verify secret 
+kubectl get secrets -n default
+kubectl get secret do-secret -n default
+
+
