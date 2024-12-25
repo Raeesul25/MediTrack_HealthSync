@@ -3,35 +3,42 @@ kind: Ingress
 metadata:
   name: microservices-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: 
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
   - host: 137.184.249.159.nip.io
     http:
       paths:
-      - path: /get_patients
+      - path: /patient
         pathType: Exact
         backend:
           service:
             name: patient-record-service-green
             port:
               number: 80
-      - path: /add_patient
+      - path: /patient/get
         pathType: Exact
         backend:
           service:
             name: patient-record-service-green
             port:
               number: 80
-      - path: /update_patient
+      - path: /patient/add
+        pathType: Exact
+        backend:
+          service:
+            name: patient-record-service-green
+            port:
+              number: 80
+      - path: /patient/update
         pathType: Prefix
         backend:
           service:
             name: patient-record-service-green
             port:
               number: 80
-      - path: /delete_patient
+      - path: /patient/delete
         pathType: Prefix
         backend:
           service:
@@ -39,50 +46,28 @@ spec:
             port:
               number: 80
 
-      - path: /get_doctors
+      - path: /doctor/get
         pathType: Exact
         backend:
           service:
             name: appointment-scheduling-service-green
             port:
               number: 80
-      - path: /add_doctor
+      - path: /doctor/add
         pathType: Exact
         backend:
           service:
             name: appointment-scheduling-service-green
             port:
               number: 80
-      - path: /update_doctor
+      - path: /doctor/update
         pathType: Prefix
         backend:
           service:
             name: appointment-scheduling-service-green
             port:
               number: 80
-      - path: /delete_doctor
-        pathType: Prefix
-        backend:
-          service:
-            name: appointment-scheduling-service-green
-            port:
-              number: 80
-
-      - path: /get_appointments
-        pathType: Exact
-        backend:
-          service:
-            name: appointment-scheduling-service-green
-            port:
-              number: 80
-      - path: /add_appointment
-        pathType: Exact
-        backend:
-          service:
-            name: appointment-scheduling-service-green
-            port:
-              number: 80
-      - path: /delete_appointment
+      - path: /doctor/delete
         pathType: Prefix
         backend:
           service:
@@ -90,14 +75,50 @@ spec:
             port:
               number: 80
 
-      - path: /add_notification
+      - path: /appointment
+        pathType: Exact
+        backend:
+          service:
+            name: appointment-scheduling-service-green
+            port:
+              number: 80
+      - path: /appointment/get
+        pathType: Exact
+        backend:
+          service:
+            name: appointment-scheduling-service-green
+            port:
+              number: 80
+      - path: /appointment/add
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-green
+            port:
+              number: 80
+      - path: /appointment/delete
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-scheduling-service-green
+            port:
+              number: 80
+
+      - path: /notification
         pathType: Exact
         backend:
           service:
             name: notification-service-green
             port:
               number: 80
-      - path: /get_notifications
+      - path: /notification/add
+        pathType: Exact
+        backend:
+          service:
+            name: notification-service-green
+            port:
+              number: 80
+      - path: /notification/get
         pathType: Exact
         backend:
           service:

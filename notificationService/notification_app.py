@@ -14,12 +14,12 @@ def get_db_connection():
     )
 
 # Route for the front-end page
-@app.route('/')
+@app.route('/notification')
 def index():
     return render_template('index.html')
 
 # API to send a notification
-@app.route('/add_notification', methods=['POST'])
+@app.route('/notification/add', methods=['POST'])
 def send_notification():
     data = request.json
     patient_id = data.get('patient_id')
@@ -57,7 +57,7 @@ def send_notification():
         connection.close()
 
 # API to retrieve all notifications
-@app.route('/get_notifications', methods=['GET'])
+@app.route('/notification/get', methods=['GET'])
 def get_notifications():
     try:
         connection = get_db_connection()

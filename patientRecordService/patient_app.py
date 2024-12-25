@@ -13,12 +13,12 @@ def get_db_connection():
     )
 
 # Route for the front-end page
-@app.route('/')
+@app.route('/patient')
 def index():
     return render_template('index.html')
 
 # API route to add a new patient
-@app.route('/add_patient', methods=['POST'])
+@app.route('/patient/add', methods=['POST'])
 def add_patient():
     data = request.json
     name = data.get('name')
@@ -50,7 +50,7 @@ def add_patient():
         connection.close()
 
 # API route to get all patients
-@app.route('/get_patients', methods=['GET'])
+@app.route('/patient/get', methods=['GET'])
 def get_patients():
     try:
         connection = get_db_connection()
@@ -71,7 +71,7 @@ def get_patients():
         connection.close()
 
 # API route to update a patient record
-@app.route('/update_patient/<int:patient_id>', methods=['PUT'])
+@app.route('/patient/update/<int:patient_id>', methods=['PUT'])
 def update_patient(patient_id):
     data = request.json
 
@@ -109,7 +109,7 @@ def update_patient(patient_id):
         connection.close()
 
 # API to delete a patient
-@app.route('/delete_patient/<int:patient_id>', methods=['DELETE'])
+@app.route('/patient/delete/<int:patient_id>', methods=['DELETE'])
 def delete_patient(patient_id):
     try:
         connection = get_db_connection()
