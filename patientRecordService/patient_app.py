@@ -54,7 +54,7 @@ def add_patient():
 def get_patients():
     try:
         connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor()
 
         query = "SELECT * FROM patients"
         cursor.execute(query)
@@ -133,4 +133,4 @@ def delete_patient(patient_id):
         connection.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
