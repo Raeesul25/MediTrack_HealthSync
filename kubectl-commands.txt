@@ -39,4 +39,5 @@ kubectl create secret docker-registry do-secret \
 kubectl get secrets -n default
 kubectl get secret do-secret -n default
 
-
+-- view logs
+kubectl logs <pod name> -n default
