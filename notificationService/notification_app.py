@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
+import psycopg2
 from datetime import datetime
 
 app = Flask(__name__)
@@ -12,6 +13,12 @@ def get_db_connection():
         password="MeditrackDB",
         database="meditrackDB"
     )
+
+MYSQL_HOST = "meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com"
+MYSQL_USER = "admin"
+MYSQL_PWD = "MeditrackDB"
+MYSQL_DB = "meditrackDB"
+PORT = "3306"
 
 # Route for the front-end page
 @app.route('/notification')
@@ -56,8 +63,14 @@ def send_notification():
 @app.route('/notification/get', methods=['GET'])
 def get_notifications():
     try:
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        connection = psycopg2.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
+        cursor = connection.cursor()
 
         query = "SELECT * FROM notifications"
         cursor.execute(query)

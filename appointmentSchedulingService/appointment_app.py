@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
+import psycopg2
 
 app = Flask(__name__)
 
@@ -12,6 +13,12 @@ def get_db_connection():
         database="meditrackDB"
     )
 
+MYSQL_HOST = "meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com"
+MYSQL_USER = "admin"
+MYSQL_PWD = "MeditrackDB"
+MYSQL_DB = "meditrackDB"
+PORT = "3306"
+
 # Route for the front-end page
 @app.route('/appointment')
 def index():
@@ -21,8 +28,14 @@ def index():
 @app.route('/doctor/get', methods=['GET'])
 def get_doctors():
     try:
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        connection = psycopg2.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
+        cursor = connection.cursor()
 
         query = "SELECT * FROM doctors"
         cursor.execute(query)
@@ -169,8 +182,14 @@ def book_appointment():
 @app.route('/appointment/get', methods=['GET'])
 def get_appointments():
     try:
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        connection = psycopg2.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
+        cursor = connection.cursor()
 
         query = """
         SELECT appointments.appointment_id, patients.name AS patient_name, 
