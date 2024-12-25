@@ -34,9 +34,6 @@ def get_doctors():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to retrieve doctors."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to add a new doctor
 @app.route('/doctor/add', methods=['POST'])
@@ -65,9 +62,6 @@ def add_doctor():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to add doctor."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to update doctor information
 @app.route('/doctor/update/<int:doctor_id>', methods=['PUT'])
@@ -102,9 +96,6 @@ def update_doctor(doctor_id):
         print(f"Error: {err}")
         return jsonify({"message": "Failed to update doctor."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to delete a doctor
 @app.route('/doctor/delete/<int:doctor_id>', methods=['DELETE'])
@@ -126,9 +117,6 @@ def delete_doctor(doctor_id):
         print(f"Error: {err}")
         return jsonify({"message": "Failed to delete doctor."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to book an appointment
 @app.route('/appointment/add', methods=['POST'])
@@ -176,9 +164,6 @@ def book_appointment():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to book appointment."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to view all appointments
 @app.route('/appointment/get', methods=['GET'])
@@ -203,9 +188,6 @@ def get_appointments():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to retrieve appointments."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to delete an appointment
 @app.route('/appointment/delete/<int:appointment_id>', methods=['DELETE'])
@@ -227,9 +209,6 @@ def delete_appointment(appointment_id):
         print(f"Error: {err}")
         return jsonify({"message": "Failed to delete appointment."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

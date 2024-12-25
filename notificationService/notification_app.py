@@ -52,10 +52,6 @@ def send_notification():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to send notification."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
-
 # API to retrieve all notifications
 @app.route('/notification/get', methods=['GET'])
 def get_notifications():
@@ -73,9 +69,6 @@ def get_notifications():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to retrieve notifications."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
-
+    
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

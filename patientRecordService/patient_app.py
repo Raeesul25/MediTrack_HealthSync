@@ -45,10 +45,6 @@ def add_patient():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to add patient record."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
-
 # API route to get all patients
 @app.route('/patient/get', methods=['GET'])
 def get_patients():
@@ -66,9 +62,6 @@ def get_patients():
         print(f"Error: {err}")
         return jsonify({"message": "Failed to retrieve patient records."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API route to update a patient record
 @app.route('/patient/update/<int:patient_id>', methods=['PUT'])
@@ -104,9 +97,6 @@ def update_patient(patient_id):
         print(f"Error: {err}")
         return jsonify({"message": "Failed to update patient record."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 # API to delete a patient
 @app.route('/patient/delete/<int:patient_id>', methods=['DELETE'])
@@ -128,9 +118,6 @@ def delete_patient(patient_id):
         print(f"Error: {err}")
         return jsonify({"message": "Failed to delete patient."}), 500
 
-    finally:
-        cursor.close()
-        connection.close()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

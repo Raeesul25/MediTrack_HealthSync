@@ -18,4 +18,4 @@ COPY tests ./tests
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "appoitment_app.py"]
+CMD ["python", "appointment_app.py"]
