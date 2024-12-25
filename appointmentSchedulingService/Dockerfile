@@ -17,5 +17,5 @@ COPY tests ./tests
 # Expose the application port
 EXPOSE 5000
 
-# Run the application
+# Run the flask application
 CMD ["python", "appointment_app.py"]
