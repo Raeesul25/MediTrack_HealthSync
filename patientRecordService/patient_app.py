@@ -1,18 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
-import psycopg2
 
 app = Flask(__name__)
 
 # Database connection configuration
-def get_db_connection():
-    return mysql.connector.connect(
-        host="meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com", 
-        user="admin",
-        password="MeditrackDB",
-        database="meditrackDB"
-    )
-
 MYSQL_HOST = "meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com"
 MYSQL_USER = "admin"
 MYSQL_PWD = "MeditrackDB"
@@ -62,7 +53,7 @@ def add_patient():
 @app.route('/patient/get', methods=['GET'])
 def get_patients():
     try:
-        connection = psycopg2.connect(
+        connection = mysql.connector.connect(
             host=MYSQL_HOST,
             user=MYSQL_USER,
             password=MYSQL_PWD,
@@ -88,7 +79,13 @@ def update_patient(patient_id):
     data = request.json
 
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         query = """
@@ -121,7 +118,13 @@ def update_patient(patient_id):
 @app.route('/patient/delete/<int:patient_id>', methods=['DELETE'])
 def delete_patient(patient_id):
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         query = "DELETE FROM patients WHERE patient_id = %s"

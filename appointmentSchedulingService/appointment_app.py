@@ -1,18 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
-import psycopg2
 
 app = Flask(__name__)
 
 # Database connection configuration
-def get_db_connection():
-    return mysql.connector.connect(
-        host="meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com", 
-        user="admin",
-        password="MeditrackDB",
-        database="meditrackDB"
-    )
-
 MYSQL_HOST = "meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com"
 MYSQL_USER = "admin"
 MYSQL_PWD = "MeditrackDB"
@@ -28,7 +19,7 @@ def index():
 @app.route('/doctor/get', methods=['GET'])
 def get_doctors():
     try:
-        connection = psycopg2.connect(
+        connection = mysql.connector.connect(
             host=MYSQL_HOST,
             user=MYSQL_USER,
             password=MYSQL_PWD,
@@ -59,7 +50,13 @@ def add_doctor():
     availability_hours = data.get('availability_hours')
 
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         query = """
@@ -82,7 +79,13 @@ def update_doctor(doctor_id):
     data = request.json
 
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         query = """
@@ -114,7 +117,13 @@ def update_doctor(doctor_id):
 @app.route('/doctor/delete/<int:doctor_id>', methods=['DELETE'])
 def delete_doctor(doctor_id):
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         query = "DELETE FROM doctors WHERE doctor_id = %s"
@@ -140,7 +149,13 @@ def book_appointment():
     appointment_date = data.get('appointment_date')
 
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         # Check if the doctor is available
@@ -182,7 +197,7 @@ def book_appointment():
 @app.route('/appointment/get', methods=['GET'])
 def get_appointments():
     try:
-        connection = psycopg2.connect(
+        connection = mysql.connector.connect(
             host=MYSQL_HOST,
             user=MYSQL_USER,
             password=MYSQL_PWD,
@@ -212,7 +227,13 @@ def get_appointments():
 @app.route('/appointment/delete/<int:appointment_id>', methods=['DELETE'])
 def delete_appointment(appointment_id):
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         query = "DELETE FROM appointments WHERE appointment_id = %s"

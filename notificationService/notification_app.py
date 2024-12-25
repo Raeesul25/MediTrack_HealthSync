@@ -1,19 +1,10 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
-import psycopg2
 from datetime import datetime
 
 app = Flask(__name__)
 
 # Database connection configuration
-def get_db_connection():
-    return mysql.connector.connect(
-        host="meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com", 
-        user="admin",
-        password="MeditrackDB",
-        database="meditrackDB"
-    )
-
 MYSQL_HOST = "meditrack-rds-db.c5mqye4q80uc.us-east-1.rds.amazonaws.com"
 MYSQL_USER = "admin"
 MYSQL_PWD = "MeditrackDB"
@@ -33,7 +24,13 @@ def send_notification():
     message = data.get('message')
 
     try:
-        connection = get_db_connection()
+        connection = mysql.connector.connect(
+            host=MYSQL_HOST,
+            user=MYSQL_USER,
+            password=MYSQL_PWD,
+            database=MYSQL_DB,
+            port=PORT
+        )
         cursor = connection.cursor()
 
         # Check if the patient is available
@@ -63,7 +60,7 @@ def send_notification():
 @app.route('/notification/get', methods=['GET'])
 def get_notifications():
     try:
-        connection = psycopg2.connect(
+        connection = mysql.connector.connect(
             host=MYSQL_HOST,
             user=MYSQL_USER,
             password=MYSQL_PWD,
