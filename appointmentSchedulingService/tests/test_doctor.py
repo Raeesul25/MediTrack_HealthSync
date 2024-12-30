@@ -12,7 +12,7 @@ def test_patient_operations():
     "availability_hours": "5 PM - 10 PM"
     }
 
-    response = requests.post(f"{BASE_URL}/add_doctor", json=data)
+    response = requests.post(f"{BASE_URL}/doctor/add", json=data)
     assert response.status_code == 201  # Ensure the request was successful
 
     # Step 2: Extract doctor_id from the response
@@ -20,11 +20,11 @@ def test_patient_operations():
     assert doctor_id is not None, "Doctor ID should be returned"
 
     # Step 3: View the doctor using the doctor_id
-    response = requests.get(f"{BASE_URL}/get_doctors")
+    response = requests.get(f"{BASE_URL}/doctor/get")
     assert response.status_code == 200  # Ensure we get a valid response
     doctors = response.json()
     assert any(d["id"] == doctor_id for d in doctors), "Patient not found in patient list"
 
     # Step 4: Delete the doctor using the doctor_id
-    response = requests.delete(f"{BASE_URL}/delete_doctor/{doctor_id}")
+    response = requests.delete(f"{BASE_URL}/doctor/delete/{doctor_id}")
     assert response.status_code == 200  # Ensure the delete was successful

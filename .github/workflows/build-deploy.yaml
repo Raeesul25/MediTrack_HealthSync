@@ -63,7 +63,7 @@ jobs:
           docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/patient-record:green ./patientRecordService
           docker push registry.digitalocean.com/meditrackcontainer/patient-record:green
 
-      - name: Build and push Appointment Scheduling Service green testing
+      - name: Build and push Appointment Scheduling Service green
         run: |
           docker build --no-cache -t registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green ./appointmentSchedulingService
           docker push registry.digitalocean.com/meditrackcontainer/appointment-scheduling:green
